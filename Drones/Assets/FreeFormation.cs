@@ -49,8 +49,7 @@ public class FreeFormation : Formation {
                 children_count--;
             }
             else if (Vector3.Distance(dest.destination.transform.position, agent.destination) > dest.transfer_distance || Vector3.Distance(dest.destination.transform.position, agent.destination) > Vector3.Distance(child.position, agent.destination)) {
-                Debug.Log("MOVING");
-              agent.SetDestination(dest.destination.transform.position);
+                agent.SetDestination(dest.destination.transform.position);
             }
         }
 	}

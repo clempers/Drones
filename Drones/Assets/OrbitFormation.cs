@@ -16,12 +16,10 @@ public class OrbitFormation : Formation {
         {
             Vector3 projected = Vector3.ProjectOnPlane(d.transform.position- transform.position, new Vector3(0, 1, 0));
             float angle = Vector3.Angle(projected, new Vector3(1f, 0f, 0f));
-            Debug.Log(Math.Cos((2 * ((float)Math.PI) * angle) / 360f));
             if (Math.Sin((2 * ((float)Math.PI) * angle) / 360f) * projected.z < 0)
                 seconds_ellapsed = seconds_per_rotation - (seconds_per_rotation * angle / 360f);
             else
                 seconds_ellapsed = seconds_per_rotation * angle / 360f;
-            Debug.Log(seconds_ellapsed);
             d.transform.SetParent(transform, true);
         }
         else

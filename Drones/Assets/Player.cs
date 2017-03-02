@@ -10,12 +10,10 @@ public class Player : MonoBehaviour
     public ControlCamera controlCamera;
     public FreeFormation freeFormation;
     public Formation attackFormation;
-
-    public WorldState state;
+    
 
     public void Awake()
     {
-        state = new WorldState();
     }
 
     // Update is called once per frame
@@ -34,7 +32,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            state.blue_laser_set = false;
+            GetComponent<WorldState>().ResetLaser(Color.blue);
             attackFormation.transform.SetParent(transform, true);
             attackFormation.relocate(freeFormation, transform.position);
         }

@@ -22,63 +22,56 @@ public class Laser : MonoBehaviour {
         laserLine = GetComponent<LineRenderer>();
     }
 
+    public bool FireLaser(Color color)
+    {
+        laserLine.enabled = true;
+        laserLine.startColor = color;
+        laserLine.endColor = color;
+        Vector3 rayOrigin = tpsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
+
+        RaycastHit hit;
+
+        laserLine.SetPosition(0, gunHandle.position);
+
+        if (Physics.Raycast(rayOrigin, tpsCamera.transform.forward, out hit, 100))
+        {
+            player.GetComponent<WorldState>().LaserFired(hit, color);
+            gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, hit.point - gunHandle.position);
+            laserLine.SetPosition(1, hit.point);
+            return true;
+        }
+        else
+        {
+            gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, rayOrigin + (tpsCamera.transform.forward * 100) - gunHandle.position);
+            laserLine.SetPosition(1, rayOrigin + (tpsCamera.transform.forward * 100));
+            return false;
+        }
+    }
+
     // Update is called once per frame
 	public void FixedUpdate ()
     {
-        player.state.red_laser_hit = false;
-        player.state.blue_laser_hit = false;
+        player.GetComponent<WorldState>().ResetLasers();
         if (Input.GetButton("Fire1"))
         {
-            laserLine.enabled = true;
-            laserLine.startColor = Color.red;
-            laserLine.endColor = Color.red;
-            Vector3 rayOrigin = tpsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
-
-            RaycastHit hit;
-
-            laserLine.SetPosition(0, gunHandle.position);
-
-            if (Physics.Raycast(rayOrigin, tpsCamera.transform.forward, out hit, 100))
-            {
-                player.state.red_laser_point = hit;
-                player.state.red_laser_set = true;
-                player.state.red_laser_hit = true;
-                gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, hit.point - gunHandle.position);
-                laserLine.SetPosition(1, hit.point);
-            }
-            else
-            {
-                gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, rayOrigin + (tpsCamera.transform.forward * 100) - gunHandle.position);
-                laserLine.SetPosition(1, rayOrigin + (tpsCamera.transform.forward * 100));
-            }
+            FireLaser(Color.red);
         }
         else if (Input.GetButton("Fire2"))
         {
-            laserLine.enabled = true;
-            laserLine.startColor = Color.blue;
-            laserLine.endColor = Color.blue;
-            Vector3 rayOrigin = tpsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
-
-            RaycastHit hit;
-
-            laserLine.SetPosition(0, gunHandle.position);
-
-            if (Physics.Raycast(rayOrigin, tpsCamera.transform.forward, out hit, 100))
-            {
-                player.state.blue_laser_point = hit;
-                player.state.blue_laser_hit = true;
-                player.state.blue_laser_set = true;
-                gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, hit.point - gunHandle.position);
-                laserLine.SetPosition(1, hit.point);
+            if (FireLaser(Color.blue)) {
+                RaycastHit hit = player.GetComponent<WorldState>().GetLaserState(Color.blue).hit;
                 player.attackFormation.transform.SetParent(hit.transform, true);
                 player.attackFormation.transform.localRotation = Quaternion.identity;
                 player.attackFormation.relocate(player.freeFormation, hit.transform.position);
             }
-            else
-            {
-                gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, rayOrigin + (tpsCamera.transform.forward * 100) - gunHandle.position);
-                laserLine.SetPosition(1, rayOrigin + (tpsCamera.transform.forward * 100));
-            }
+        }
+        else if (Input.GetKey(KeyCode.Alpha1))
+        {
+            FireLaser(Color.green);
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            FireLaser(Color.yellow);
         }
         else
         {

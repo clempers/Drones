@@ -15,89 +15,50 @@ public class ShieldStorageFormation : Formation
 
     public FreeFormation freeFormation;
 
-    private Transform[] attackers;
-    private Transform[] defenders;
-    private int attackers_size;
-    private int num_attackers;
+    private List<Transform> attackers;
+    private List<Transform> defenders;
 
     private float shield_inertia=2.0f;
 
-    private Transform[] pending_attackers;
-    private Transform[] pending_defenders;
-    private float[] pending_idle;
-    private int pending_size;
-    private int num_pending;
+    private List<Transform> pending_attackers;
+    private List<Transform> pending_defenders;
+    private List<float> pending_idle;
 
     public void Awake()
     {
-        attackers = new Transform[8];
-        defenders = new Transform[8];
-        attackers_size = 8;
-        num_attackers = 0;
+        attackers = new List<Transform>();
+        defenders = new List<Transform>();
 
-        pending_attackers = new Transform[8];
-        pending_defenders = new Transform[8];
-        pending_idle = new float[8];
-        pending_size = 8;
-        num_pending = 0;
+        pending_attackers = new List<Transform>();
+        pending_defenders = new List<Transform>();
+        pending_idle = new List<float>();
     }
 
-    private void add_pending(Transform attacker, Transform victim)
+    private void add_pending(Transform attacker, Transform defender)
     {
-        if (1 + num_pending >= pending_size)
-        {
-            Transform[] new_pending_attackers = new Transform[pending_size * 2];
-            Transform[] new_pending_defenders = new Transform[pending_size * 2];
-            float[] new_pending_idle = new float[pending_size * 2];
-            for (int i = 0; i < pending_size; i++)
-            {
-                new_pending_attackers[i] = pending_attackers[i];
-                new_pending_defenders[i] = pending_defenders[i];
-                new_pending_idle[i] = pending_idle[i];
-            }
-            pending_attackers = new_pending_attackers;
-            pending_defenders = new_pending_defenders;
-            pending_idle = new_pending_idle;
-            pending_size *= 2;
-        }
-        pending_attackers[num_pending] = attacker;
-        pending_defenders[num_pending] = victim;
-        pending_idle[num_pending] = 0f;
-        num_pending++;
+        pending_attackers.Add(attacker);
+        pending_defenders.Add(defender);
+        pending_idle.Add(0f);
     }
 
-    private void add_attacker(Transform attacker, Transform victim)
+    private void add_attacker(Transform attacker, Transform defender)
     {
-        if (1 + num_attackers >= attackers_size)
-        {
-            Transform[] new_attackers = new Transform[attackers_size * 2];
-            Transform[] new_defenders = new Transform[attackers_size * 2];
-            for (int i = 0; i < attackers_size; i++)
-            {
-                new_attackers[i] = attackers[i];
-                new_defenders[i] = defenders[i];
-            }
-            attackers = new_attackers;
-            defenders = new_defenders;
-            attackers_size *= 2;
-        }
-        attackers[num_attackers] = attacker;
-        defenders[num_attackers] = victim;
-        num_attackers++;
+        attackers.Add(attacker);
+        defenders.Add(defender);
     }
 
     public override void add_drone(Drone d)
     {
-        if (transform.childCount == 0)
+        if (pending_defenders.Count !=0 )
+            helpPending(d.transform);
+        else if (transform.childCount == 0)
         {
             Vector3 projected = Vector3.ProjectOnPlane(d.transform.position - transform.position, new Vector3(0, 1, 0));
             float angle = Vector3.Angle(projected, new Vector3(1f, 0f, 0f));
-            Debug.Log(Math.Cos((2 * ((float)Math.PI) * angle) / 360f));
             if (Math.Sin((2 * ((float)Math.PI) * angle) / 360f) * projected.z < 0)
                 seconds_ellapsed = seconds_per_rotation - (seconds_per_rotation * angle / 360f);
             else
                 seconds_ellapsed = seconds_per_rotation * angle / 360f;
-            Debug.Log(seconds_ellapsed);
             d.transform.SetParent(transform, true);
         }
         else
@@ -112,44 +73,36 @@ public class ShieldStorageFormation : Formation
             d.transform.SetParent(transform, true);
             d.transform.SetSiblingIndex(i);
         }
-        if (num_pending != 0)
-            helpPending(d.transform);
     }
 
     public void helpPending(Transform drone)
     {
-        num_pending--;
-        sendHelp(drone.transform, pending_attackers[num_pending], pending_defenders[num_pending]);
+        sendHelp(drone.transform, pending_attackers[0], pending_defenders[0]);
+        pending_attackers.RemoveAt(0);
+        pending_defenders.RemoveAt(0);
+        pending_idle.RemoveAt(0);
     }
 
     public void cancelHelp(Transform attacker, Transform victim)
     {
         int idx = -1;
-        for (int i = 0; i < num_attackers; i++)
+        for (int i = 0; i < attackers.Count; i++)
         {
             if (attacker.Equals(attackers[i]) && victim.Equals(defenders[i]))
                 idx = i;
         }
         if (idx == -1)
             return;
-        for (int i = idx + 1; i < num_attackers; i++)
-        {
-            attackers[i - 1] = attackers[i];
-            defenders[i - 1] = defenders[i];
-        }
-        num_attackers--;
+        attackers.RemoveAt(idx);
+        defenders.RemoveAt(idx);
     }
 
     public void cancelPending(int idx)
     {
         cancelHelp(pending_attackers[idx], pending_defenders[idx]);
-        for (int i = idx + 1; i < num_pending; i++)
-        {
-            pending_attackers[i - 1] = pending_attackers[i];
-            pending_defenders[i - 1] = pending_defenders[i];
-            pending_idle[i - 1] = pending_idle[i];
-        }
-        num_pending--;
+        pending_attackers.RemoveAt(idx);
+        pending_defenders.RemoveAt(idx);
+        pending_idle.RemoveAt(idx);
     }
 
     private void sendHelp(Transform drone, Transform attacker, Transform victim)
@@ -170,22 +123,20 @@ public class ShieldStorageFormation : Formation
 
     public void requestHelp(Transform attacker, Transform victim)
     {
-        bool isNew = true;
-        for(int i = 0; i < num_attackers; i++)
+        bool is_duplicate = false;
+        for(int i = 0; i < attackers.Count; i++)
         {
             if (attacker.Equals(attackers[i]) && victim.Equals(defenders[i]))
-                isNew = false;
+                is_duplicate = true;
         }
 
-        if (!isNew) return;
+        if (is_duplicate) return;
 
         add_attacker(attacker, victim);
         if (transform.childCount == 0)
-        {
             add_pending(attacker, victim);
-            return;
-        }
-        sendHelp(transform.GetChild(0), attacker, victim);
+        else
+            sendHelp(transform.GetChild(0), attacker, victim);
     }
 
     public void reassignShield(ShieldDrone drone)
@@ -193,8 +144,7 @@ public class ShieldStorageFormation : Formation
         ShieldingTarget target = drone.GetComponent<ShieldingTarget>();
         drone.SetShieldPower(false);
         cancelHelp(target.attacker, target.defender);
-        Debug.Log(num_pending);
-        if(num_pending == 0)
+        if(pending_attackers.Count == 0)
             target.freeFormation.move_drone(drone, target.home_formation);
         else
         {
@@ -205,7 +155,7 @@ public class ShieldStorageFormation : Formation
     // Update is called once per frame
     void FixedUpdate()
     {
-        for(int i =0; i < num_pending; i++)
+        for(int i =0; i < pending_attackers.Count; i++)
         {
             pending_idle[i] += Time.deltaTime;
             if(pending_idle[i] > shield_inertia)

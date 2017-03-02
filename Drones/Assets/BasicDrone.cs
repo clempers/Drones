@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicDrone : Drone {
-
-    public float max_velocity = 1;
-
     public bool precision_target = true;
 
     private Vector3 target;
@@ -19,16 +16,6 @@ public class BasicDrone : Drone {
 
     private float shotDuration = 1f;
 
-    public override void move_towards_local(float t, Vector3 location)
-    {
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, location, t * max_velocity);
-    }
-
-    public override void move_towards(float t, Vector3 location)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, location, max_velocity);
-    }
-
     // Use this for initialization
     void Start () {
         laserLine = GetComponent<LineRenderer>();
@@ -38,13 +25,15 @@ public class BasicDrone : Drone {
 	void FixedUpdate () {
         if (precision_target)
         {
-            RaycastHit hit = player.state.red_laser_point;
             String hit_owner = "";
             String hit_check_owner = "";
 
             laserLine.enabled = false;
-            if (player.state.red_laser_hit)
+            LaserState ls = player.GetComponent<WorldState>().GetLaserState(Color.red);
+
+            if (ls != null && ls.is_active)
             {
+                RaycastHit hit = ls.hit;
                 if (hit.collider.GetComponent<Owner>() != null)
                     hit_owner = hit.collider.GetComponent<Owner>().owner;
                 RaycastHit hit_check;
@@ -66,12 +55,13 @@ public class BasicDrone : Drone {
         }
         else
         {
-            RaycastHit hit = player.state.blue_laser_point;
             laserLine.enabled = false;
             String hit_owner = "";
             String hit_check_owner = "";
-            if (player.state.blue_laser_set )
+            LaserState ls = player.GetComponent<WorldState>().GetLaserState(Color.blue);
+            if (ls != null)
             {
+                RaycastHit hit = ls.hit;
                 if (hit.collider.GetComponent<Owner>() != null)
                     hit_owner = hit.collider.GetComponent<Owner>().owner;
                 RaycastHit hit_check;

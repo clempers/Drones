@@ -2,17 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldState
+public class WorldState : MonoBehaviour
 {
-    public bool red_laser_set = false;
+    public List<LaserState> lasers;
 
-    public RaycastHit red_laser_point;
+    void Awake()
+    {
+        lasers = new List<LaserState>();
+    }
 
-    public bool red_laser_hit = false;
+    public void ResetLasers()
+    {
+        foreach (LaserState ls in lasers)
+        {
+            ls.is_active = false;
+        }
+    }
 
-    public bool blue_laser_set = false;
+    public void LaserFired(RaycastHit hit, Color color)
+    {
+        LaserState laser = lasers.Find(ls => ls.laser_color.Equals(color));
+        if (laser != null)
+        {
+            laser.is_active = true;
+            laser.hit = hit;
+        } else {
+            laser = new LaserState();
+            laser.hit = hit;
+            laser.is_active = true;
+            laser.laser_color = color;
+            lasers.Add(laser);
+        }
+    }
 
-    public RaycastHit blue_laser_point;
+    public LaserState GetLaserState(Color color)
+    {
+        return lasers.Find(ls => ls.laser_color.Equals(color));
+    }
 
-    public bool blue_laser_hit = false;
+    public void ResetLaser(Color color)
+    {
+        LaserState laser = lasers.Find(ls => ls.laser_color.Equals(color));
+        if(laser != null)
+            lasers.Remove(laser);
+    }
 }

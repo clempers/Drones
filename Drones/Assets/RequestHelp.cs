@@ -9,7 +9,6 @@ public class RequestHelp : MonoBehaviour, DamageTarget
 
     public void damage(float damage, Transform source)
     {
-        Debug.Log("Damage");
         if (shieldFormation != null)
             shieldFormation.requestHelp(source, transform);
     }

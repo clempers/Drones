@@ -4,21 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ShieldDrone : Drone {
-    public float max_velocity;
+    public Shield shield;
 
     void Start()
     {
         SetShieldPower(false);
-    }
-
-    public override void move_towards_local(float t, Vector3 location)
-    {
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, location, t * max_velocity);
-    }
-
-    public override void move_towards(float t, Vector3 location)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, location, max_velocity);
     }
 
     public void shieldFrom(Transform attacker, Transform victim)
@@ -28,12 +18,6 @@ public class ShieldDrone : Drone {
 
     public void SetShieldPower(bool enabled)
     {
-        Transform child;
-        for(int i =0; i < transform.childCount; i++)
-        {
-            child = transform.GetChild(i);
-            child.GetComponent<MeshRenderer>().enabled = enabled;
-            child.GetComponent<Collider>().enabled = enabled;
-        }
+        shield.powered = enabled;
     }
 }
