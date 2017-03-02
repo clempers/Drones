@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Drone/Pylon Drone")]
+
 public class PylonDrone : Drone {
     public Vector3 bottom_offset;
 
@@ -17,4 +19,11 @@ public class PylonDrone : Drone {
     {
         transform.rotation = Quaternion.FromToRotation(shield_direction, pylon - transform.position);
     }
+
+
+    private void LateUpdate()
+    {
+        fix_scale();
+    }
 }
+

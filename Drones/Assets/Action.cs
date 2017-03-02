@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class Action : MonoBehaviour {
-
-    abstract public void OnTriggerEnter(Collider other);
+abstract public class Action<Input> : MonoBehaviour {
+    abstract public void OnTrigger(Input input);
 }

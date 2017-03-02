@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Formation/Shield Storage Formation")]
 public class ShieldStorageFormation : Formation
 {
     public float seconds_per_rotation;
@@ -11,7 +12,9 @@ public class ShieldStorageFormation : Formation
 
     public float radius;
 
-    public DirectShieldFormation directShield;
+    public DirectShieldFormation direct_shield;
+
+    public List<DirectShieldFormation> active_shields;
 
     public FreeFormation freeFormation;
 
@@ -116,9 +119,14 @@ public class ShieldStorageFormation : Formation
         target.freeFormation = freeFormation;
         target.home_formation = this;
         remove_drone(d);
-        if (victim.GetComponent<DirectShieldFormation>() == null)
-            Instantiate(directShield, victim.position, Quaternion.identity).transform.SetParent(victim);
-        freeFormation.move_drone(d, victim.GetComponentInChildren<DirectShieldFormation>());
+        DirectShieldFormation directShield = active_shields.Find(f => f.follow.Equals(victim));
+        if (directShield == null)
+        {
+            directShield = Instantiate(direct_shield, victim.position, Quaternion.identity);
+            active_shields.Add(directShield);
+            directShield.follow = victim;
+        }
+        freeFormation.move_drone(d, directShield);
     }
 
     public void requestHelp(Transform attacker, Transform victim)

@@ -22,6 +22,11 @@ public class Laser : MonoBehaviour {
         laserLine = GetComponent<LineRenderer>();
     }
 
+    public Color laser1;
+    public Color laser2;
+    public Color laser3;
+    public Color laser4;
+
     public bool FireLaser(Color color)
     {
         laserLine.enabled = true;
@@ -54,24 +59,22 @@ public class Laser : MonoBehaviour {
         player.GetComponent<WorldState>().ResetLasers();
         if (Input.GetButton("Fire1"))
         {
-            FireLaser(Color.red);
+            FireLaser(laser1);
         }
         else if (Input.GetButton("Fire2"))
         {
-            if (FireLaser(Color.blue)) {
-                RaycastHit hit = player.GetComponent<WorldState>().GetLaserState(Color.blue).hit;
-                player.attackFormation.transform.SetParent(hit.transform, true);
-                player.attackFormation.transform.localRotation = Quaternion.identity;
-                player.attackFormation.relocate(player.freeFormation, hit.transform.position);
+            if (FireLaser(laser2)) {
+                RaycastHit hit = player.GetComponent<WorldState>().GetLaserState(laser2).hit;
+                player.attackFormation.relocate(player.freeFormation, hit.transform);
             }
         }
         else if (Input.GetKey(KeyCode.Alpha1))
         {
-            FireLaser(Color.green);
+            FireLaser(laser3);
         }
         else if (Input.GetKey(KeyCode.Alpha2))
         {
-            FireLaser(Color.yellow);
+            FireLaser(laser4);
         }
         else
         {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Formation/Shoulder Formation")]
 public class ShoulderFormation : Formation { 
     public double base_offset;
     public double inc_offset;

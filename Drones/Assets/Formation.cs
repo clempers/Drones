@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 abstract public class Formation : MonoBehaviour {
+    public Transform follow;
+
     abstract public void add_drone(Drone d);
 
     public void remove_drone(Drone d)
@@ -10,7 +12,7 @@ abstract public class Formation : MonoBehaviour {
         d.transform.parent = null;
     }
 
-    public void relocate(FreeFormation freeFormation, Vector3 newLocation)
+    public void relocate(FreeFormation freeFormation, Transform newFollow)
     {
         Drone[] drones = new Drone[transform.childCount];
 
@@ -27,11 +29,17 @@ abstract public class Formation : MonoBehaviour {
             remove_drone(d);
             i++;
         }
-        transform.position = newLocation;
+        follow = newFollow;
+        transform.position = newFollow.position;
 
         for (int j = 0; j < i; j++)
         {
             freeFormation.add_drone(drones[j]);
         }
+    }
+
+    private void LateUpdate()
+    {
+        transform.position = follow.position;
     }
 }

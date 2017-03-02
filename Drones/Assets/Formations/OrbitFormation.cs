@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Formation/Orbit Formation")]
 public class OrbitFormation : Formation {
     public float seconds_per_rotation;
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Formation/Free Formation")]
 public class FreeFormation : Formation { 
     public override void add_drone(Drone d)
     {

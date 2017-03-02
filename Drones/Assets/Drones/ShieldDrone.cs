@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Drone/Shield Drone")]
 public class ShieldDrone : Drone {
     public Shield shield;
 
@@ -19,5 +20,10 @@ public class ShieldDrone : Drone {
     public void SetShieldPower(bool enabled)
     {
         shield.powered = enabled;
+    }
+
+    private void LateUpdate()
+    {
+        fix_scale();
     }
 }

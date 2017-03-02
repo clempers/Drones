@@ -29,12 +29,5 @@ public class Player : MonoBehaviour
         GetComponent<CharacterController>().SimpleMove(transform.rotation * movement);
 
         controlCamera.rotateVertical(Input.GetAxis("Mouse Y"));
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            GetComponent<WorldState>().ResetLaser(Color.blue);
-            attackFormation.transform.SetParent(transform, true);
-            attackFormation.relocate(freeFormation, transform.position);
-        }
     }
 }

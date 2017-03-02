@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Formation/Shield Wall Formation")]
 public class ShieldWallFormation : Formation {
     public PylonDrone pylon1;
     public Vector3 pylon1_location;
@@ -48,11 +49,11 @@ public class ShieldWallFormation : Formation {
 
         laser = player.GetComponent<WorldState>().GetLaserState(Color.green);
         if (laser != null && laser.is_active)
-            pylon1_location = laser.hit.point;
+            pylon1_location = Vector3.ProjectOnPlane(laser.hit.point, new Vector3(0,1,0));
 
         laser = player.GetComponent<WorldState>().GetLaserState(Color.yellow);
         if (laser != null && laser.is_active)
-            pylon2_location = laser.hit.point;
+            pylon2_location = Vector3.ProjectOnPlane(laser.hit.point, new Vector3(0,1,0));
 
         if (pylon1 != null)
             pylon1.move_bottom_towards(Time.deltaTime, pylon1_location);
