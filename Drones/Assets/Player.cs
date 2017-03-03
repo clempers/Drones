@@ -25,9 +25,9 @@ public class Player : MonoBehaviour
 
         movement = movement.normalized * speed * Time.deltaTime;
 
-        transform.Rotate(0, Input.GetAxis("Mouse X")*rspeed, 0);
+        transform.Rotate(0, Input.GetAxis("Mouse X")*rspeed*Time.timeScale, 0);
         GetComponent<CharacterController>().SimpleMove(transform.rotation * movement);
 
-        controlCamera.rotateVertical(Input.GetAxis("Mouse Y"));
+        controlCamera.rotateVertical(Input.GetAxis("Mouse Y")*Time.timeScale);
     }
 }

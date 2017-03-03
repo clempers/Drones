@@ -17,7 +17,6 @@ public class ShieldWallFormation : Formation {
 
     public Player player;
 
-
     public override void add_drone(Drone d)
     {
         PylonDrone pylon = d.GetComponent<PylonDrone>();
@@ -46,14 +45,7 @@ public class ShieldWallFormation : Formation {
 	void Update ()
     {
         LaserState laser;
-
-        laser = player.GetComponent<WorldState>().GetLaserState(Color.green);
-        if (laser != null && laser.is_active)
-            pylon1_location = Vector3.ProjectOnPlane(laser.hit.point, new Vector3(0,1,0));
-
-        laser = player.GetComponent<WorldState>().GetLaserState(Color.yellow);
-        if (laser != null && laser.is_active)
-            pylon2_location = Vector3.ProjectOnPlane(laser.hit.point, new Vector3(0,1,0));
+        
 
         if (pylon1 != null)
             pylon1.move_bottom_towards(Time.deltaTime, pylon1_location);

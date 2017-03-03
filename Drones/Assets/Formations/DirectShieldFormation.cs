@@ -9,6 +9,7 @@ public class DirectShieldFormation : Formation
     public float radius=2.0f;
 
     public float duplicate_radius = 0.1f;
+    
     public override void add_drone(Drone d)
     {
         if (d.GetComponent<ShieldDrone>() != null && d.GetComponent<ShieldingTarget>() != null)

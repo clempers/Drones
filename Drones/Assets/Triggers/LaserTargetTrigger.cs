@@ -10,6 +10,8 @@ public class LaserTargetTrigger : TransformTrigger {
 
     public Color laser_color;
 
+    static public MetaTriggerData metaData = new MetaTriggerData("Laser Target", new List<MetaActionData>() { MoveFormationTargetAction.metaData },  typeof(LaserTargetTrigger));
+
     public override void CheckTrigger()
     {
         LaserState ls = worldState.GetLaserState(laser_color);

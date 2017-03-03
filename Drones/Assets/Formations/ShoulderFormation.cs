@@ -7,6 +7,7 @@ using UnityEngine;
 public class ShoulderFormation : Formation { 
     public double base_offset;
     public double inc_offset;
+    
 
     public override void add_drone(Drone d)
     {

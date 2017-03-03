@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("Formation/Free Formation")]
-public class FreeFormation : Formation { 
+public class FreeFormation : Formation {
+
+    static public MetaFormationData metaData = new MetaFormationData("Free Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData }, typeof(FreeFormation));
+
     public override void add_drone(Drone d)
     {
         if (d.GetComponent<DestinationFormation>() != null)
