@@ -6,8 +6,8 @@ using UnityEngine;
 [AddComponentMenu("Action/Laser Point Action")]
 public class LaserPointAction : VectorAction
 {
-    public override void OnTrigger(Vector3 input)
+    public override void OnTrigger(Vector3? input)
     {
-        GetComponent<BasicDrone>().LaserPoint(input);
+        GetComponent<BasicDrone>().LaserPoint(input ?? Vector3.zero);
     }
 }

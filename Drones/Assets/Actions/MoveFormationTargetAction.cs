@@ -8,10 +8,17 @@ public class MoveFormationTargetAction : TransformAction
 {
     public FreeFormation freeFormation;
 
-    static public MetaActionData metaData = new MetaActionData("Move Formation", typeof(MoveFormationTargetAction));
+    static public MetaActionData metaData = new MetaActionData("Move Formation", typeof(MoveFormationTargetAction), (ui => ui.moveFormationTargetCreator));
 
     public override void OnTrigger(Transform input)
     {
-        GetComponent<Formation>().relocate(freeFormation, input);
+        Formation formation = GetComponent<Formation>();
+        if (!formation.transform.position.Equals(input.position))
+        {
+            Debug.Log("Moving Formation");
+            Debug.Log(input.position);
+            GetComponent<Formation>().relocate(freeFormation, input);
+        }
+
     }
 }

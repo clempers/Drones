@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class BlankAction : Action<bool> {
+abstract public class BlankAction : Action<object> {
 
-    public override void OnTrigger(bool input)
+    public override void OnTrigger(object input)
     {
         OnTrigger();
     }

@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class VectorAction : Action<Vector3> {
+abstract public class VectorAction : Action<Vector3?> {
 
 }

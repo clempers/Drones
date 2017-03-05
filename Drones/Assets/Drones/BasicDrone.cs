@@ -7,11 +7,15 @@ using UnityEngine;
 public class BasicDrone : Drone {
     public bool precision_target = true;
 
+    static public MetaDroneData metaData = new MetaDroneData("Basic Drone", new List<MetaTriggerData>() { LaserTargetTrigger.metaData }, typeof(BasicDrone), (ui => ui.basicDroneCreator));
+
     private Vector3 target;
 
-    public Player player;
+    public WorldState state;
 
-    private LineRenderer laserLine;
+    public Laser laser;
+
+    public Color laser_color;
 
     public Vector3 aim = new Vector3(1f, 1f, 1f);
 
@@ -19,61 +23,35 @@ public class BasicDrone : Drone {
 
     // Use this for initialization
     void Start () {
-        laserLine = GetComponent<LineRenderer>();
-	}
-	
-	// Update is called once per frame
-	void FixedUpdate ()
+        laser = GetComponent<Laser>();
+        laser.state = state;
+        laser.shouldFire = DifferentOwner;
+        laser.laser_range = (aim => 1f + Vector3.Distance(transform.position, aim));
+        laser.onHit = (hit =>
+        {
+            DamageTarget dt = hit.collider.GetComponent<DamageTarget>();
+            if (dt != null)
+                dt.damage(1, transform);
+        });
+    }
+
+    public bool DifferentOwner(RaycastHit hit)
     {
-        laserLine.enabled = false;
-        if (!precision_target)
-        {
-        }
-        else
-        {
-        }
+        String hit_owner = "";
+        Owner drone_owner = GetComponent<Owner>();
+        if (hit.collider.GetComponent<Owner>() != null)
+            hit_owner = hit.collider.GetComponent<Owner>().owner;
+        return drone_owner == null || !drone_owner.Equals(hit_owner);
     }
 
     public void LaserTarget(Transform target)
     {
-        String hit_check_owner = "";
-        Owner drone_owner = GetComponent<Owner>();
-        RaycastHit hit_check;
-        if (Physics.Raycast(transform.position, target.position - transform.position, out hit_check, 1.0f + (target.position - transform.position).magnitude))
-        {
-            if (hit_check.collider.GetComponent<Owner>() != null)
-                hit_check_owner = hit_check.collider.GetComponent<Owner>().owner;
-            if (drone_owner == null || !drone_owner.owner.Equals(hit_check_owner))
-            {
-                if (hit_check.collider.GetComponent<DamageTarget>() != null)
-                    hit_check.collider.GetComponent<DamageTarget>().damage(1.0f, transform);
-                laserLine.enabled = true;
-                laserLine.SetPosition(0, transform.position);
-                laserLine.SetPosition(1, hit_check.point);
-                aim = target.position;
-            }
-        }
+        laser.UpdateLaser(laser_color, target.position);
     }
 
     public void LaserPoint(Vector3 target)
     {
-        String hit_check_owner = "";
-        Owner drone_owner = GetComponent<Owner>();
-        RaycastHit hit_check;
-        if (Physics.Raycast(transform.position, target - transform.position, out hit_check, 1.0f + (target - transform.position).magnitude))
-        {
-            if (hit_check.collider.GetComponent<Owner>() != null)
-                hit_check_owner = hit_check.collider.GetComponent<Owner>().owner;
-            if (drone_owner == null || !drone_owner.owner.Equals(hit_check_owner))
-            {
-                if (hit_check.collider.GetComponent<DamageTarget>() != null)
-                    hit_check.collider.GetComponent<DamageTarget>().damage(1.0f, transform);
-                laserLine.enabled = true;
-                laserLine.SetPosition(0, transform.position);
-                laserLine.SetPosition(1, hit_check.point);
-                aim = target;
-            }
-        }
+        laser.UpdateLaser(laser_color, target);
     }
 }
 

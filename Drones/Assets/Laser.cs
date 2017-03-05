@@ -4,82 +4,89 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour {
 
-    public Camera tpsCamera;
+    public delegate bool HitConditional(RaycastHit hit);
+
+    public HitConditional shouldFire;
+
+    public delegate void HitAction(RaycastHit hit);
+
+    public HitAction onHit;
+
+    public delegate float TargetRange(Vector3 target);
+
+    public TargetRange laser_range;
 
     public Transform gunEnd;
 
     private LineRenderer laserLine;
 
-    public Transform gunHandle;
+    public WorldState state;
 
-    public Player player;
+    private bool powered = false;
 
-    private float shotDuration = 0.5f;
+    private bool remain_on = false;
+
+    public Color color;
+
+    public Vector3 aim;
+
+    public Vector3 hit_location;
 
     // Update is called once per frame
     public void Start()
     {
         laserLine = GetComponent<LineRenderer>();
+        laserLine.enabled = false;
     }
 
-    public Color laser1;
-    public Color laser2;
-    public Color laser3;
-    public Color laser4;
-
-    public bool FireLaser(Color color)
+    IEnumerator FireLaser()
     {
+		while (remain_on || Time.deltaTime == 0f)
+        {
+			if (Time.deltaTime != 0f) {
+				float range = 100f;
+				if (laser_range != null)
+					range = laser_range (aim);
+				laserLine.startColor = color;
+				laserLine.endColor = color;
+				Vector3 rayOrigin = gunEnd.position;
+
+				RaycastHit hit;
+
+				laserLine.SetPosition (0, gunEnd.position);
+
+				if (Physics.Raycast (rayOrigin, aim - rayOrigin, out hit, range)) {
+					if (shouldFire == null || shouldFire (hit)) {
+						state.LaserFired (hit, color);
+						laserLine.SetPosition (1, hit.point);
+						if (onHit != null)
+							onHit (hit);
+					} else
+						laserLine.enabled = false;
+				} else {
+					laserLine.SetPosition (1, rayOrigin + (aim - rayOrigin).normalized * range);
+				}
+				remain_on = false;
+			}
+            yield return null;
+        }
+        powered = false;
+        laserLine.enabled = false;
+    }
+
+    private void ActivateLaser()
+    {
+        powered = true;
         laserLine.enabled = true;
-        laserLine.startColor = color;
-        laserLine.endColor = color;
-        Vector3 rayOrigin = tpsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
-
-        RaycastHit hit;
-
-        laserLine.SetPosition(0, gunHandle.position);
-
-        if (Physics.Raycast(rayOrigin, tpsCamera.transform.forward, out hit, 100))
-        {
-            player.GetComponent<WorldState>().LaserFired(hit, color);
-            gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, hit.point - gunHandle.position);
-            laserLine.SetPosition(1, hit.point);
-            return true;
-        }
-        else
-        {
-            gunHandle.rotation = Quaternion.FromToRotation(Vector3.forward, rayOrigin + (tpsCamera.transform.forward * 100) - gunHandle.position);
-            laserLine.SetPosition(1, rayOrigin + (tpsCamera.transform.forward * 100));
-            return false;
-        }
+        StartCoroutine(FireLaser());
     }
 
-    // Update is called once per frame
-	public void FixedUpdate ()
+    public void UpdateLaser(Color color, Vector3 aim)
     {
-        player.GetComponent<WorldState>().ResetLasers();
-        if (Input.GetButton("Fire1"))
-        {
-            FireLaser(laser1);
-        }
-        else if (Input.GetButton("Fire2"))
-        {
-            if (FireLaser(laser2)) {
-                RaycastHit hit = player.GetComponent<WorldState>().GetLaserState(laser2).hit;
-                player.attackFormation.relocate(player.freeFormation, hit.transform);
-            }
-        }
-        else if (Input.GetKey(KeyCode.Alpha1))
-        {
-            FireLaser(laser3);
-        }
-        else if (Input.GetKey(KeyCode.Alpha2))
-        {
-            FireLaser(laser4);
-        }
-        else
-        {
-            laserLine.enabled = false;
-        }
+        this.color = color;
+        this.aim = aim;
+        remain_on = true;
+        if (!powered)
+            ActivateLaser();
     }
-
 }

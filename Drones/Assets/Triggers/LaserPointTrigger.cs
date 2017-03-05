@@ -10,13 +10,14 @@ public class LaserPointTrigger : VectorTrigger {
 
     public Color laser_color;
 
-    public override void CheckTrigger()
+    public override Vector3? FireTrigger()
     {
         LaserState ls = worldState.GetLaserState(laser_color);
 
         if (ls != null && ls.is_active)
         {
-            actions.ForEach(x => x.OnTrigger(ls.hit.point));
+            return ls.hit.point;
         }
+        return null;
     }
 }

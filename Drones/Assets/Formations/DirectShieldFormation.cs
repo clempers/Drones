@@ -43,7 +43,7 @@ public class DirectShieldFormation : Formation
                     if (target.wasted_time > target.wasted_inertia)
                     {
                         remove_drone(drone);
-                        i--;
+                        j--;
                         child_count--;
                         drone.GetComponent<ShieldingTarget>().home_formation.reassignShield(drone);
                     }
@@ -57,18 +57,17 @@ public class DirectShieldFormation : Formation
             d = child.GetComponent<ShieldDrone>();
             target = child.GetComponent<ShieldingTarget>();
             target.idle_time += Time.deltaTime;
-            Vector3 aim = target.attacker.GetComponent<BasicDrone>().aim - transform.position;
-            Vector3 projected = Vector3.ProjectOnPlane(target.attacker.position - transform.position, target.attacker.position - transform.position - aim);
-            Debug.DrawRay(transform.position, projected, Color.red);
-            Debug.DrawRay(target.attacker.position, target.attacker.GetComponent<BasicDrone>().aim - target.attacker.position, Color.white);
+            Vector3 aim = target.attacker.GetComponent<Laser>().aim - transform.position;
+            Vector3 projected = Vector3.ProjectOnPlane(aim, target.attacker.position - transform.position - aim);
+            Debug.DrawRay(transform.position, aim, Color.black);
+            Debug.DrawRay(transform.position + aim, projected, Color.red);
+            Debug.DrawRay(transform.position+aim, target.attacker.position - transform.position-aim, Color.blue);
             if (projected.magnitude > radius)
                 d.move_towards_local(Time.deltaTime, (target.attacker.position - transform.position).normalized * radius);
             else
             {
                 float scalar = Mathf.Sqrt(radius * radius - (projected.magnitude * projected.magnitude));
-                Vector3 scaled_vector = (target.attacker.GetComponent<BasicDrone>().aim - target.attacker.position).normalized * -scalar;
-                Debug.DrawRay(projected+transform.position, scaled_vector, Color.red);
-                Debug.DrawRay(transform.position, projected + scaled_vector, Color.yellow);
+                Vector3 scaled_vector = (target.attacker.position - transform.position - aim).normalized * scalar;
                 d.move_towards_local(Time.deltaTime, scaled_vector + projected);
             }
             d.shieldFrom(target.attacker, transform);

@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class Action<Input> : MonoBehaviour {
-    abstract public void OnTrigger(Input input);
+abstract public class Action<T> : MonoBehaviour {
+    abstract public void OnTrigger(T input);
 }

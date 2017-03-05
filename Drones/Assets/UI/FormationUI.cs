@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FormationUI : MonoBehaviour {
+public class FormationUI : ComponentUI {
     public MetaFormationData metaFormationData;
 
     public Dropdown trigger_selector;
@@ -12,7 +12,7 @@ public class FormationUI : MonoBehaviour {
 
     public Transform target;
 
-    public Formation realFormation;
+    public Component realFormation;
 
     public Text title;
 
@@ -30,20 +30,26 @@ public class FormationUI : MonoBehaviour {
 
     private void FillInFields()
     {
-        Debug.Log("FILL FIELDS");
-        Trigger<Object>[] triggers = realFormation.GetComponents<Trigger<Object>>();
+        List<Component> triggers = new List<Component>();
+        metaFormationData.allowedTriggers.ForEach(md => triggers.AddRange(realFormation.GetComponents(md.triggerType)));
 
         foreach (var t in triggers)
             RebuildTrigger(t);
     } 
 
-    public void RebuildTrigger<T>(Trigger<T> trigger)
+    public void RebuildTrigger(Component trigger)
     {
-        Debug.Log("Rebuild Trigger");
         MetaTriggerData metaData = metaFormationData.allowedTriggers.Find(x => trigger.GetType() == x.triggerType);
-        Debug.Log(metaData == null);
-        if(metaData != null)
-            MakeTrigger(metaData);
+        if (metaData != null)
+        {
+            GameObject newTrigger = MakeTrigger(metaData);
+            newTrigger.GetComponent<TriggerUI>().realTrigger = trigger;
+            if (metaData.creator(uiElements) != null)
+            {
+                GameObject triggerCreator = Instantiate(metaData.creator(uiElements));
+                triggerCreator.transform.parent = newTrigger.transform;
+            }
+        }
     }
 
     private void MakeNewTrigger()
@@ -51,14 +57,20 @@ public class FormationUI : MonoBehaviour {
         string trigger_name = trigger_selector.options[trigger_selector.value].text;
 
         MetaTriggerData metaData = metaFormationData.allowedTriggers.Find(x => x.name.Equals(trigger_name));
-        MakeTrigger(metaData);
+        realFormation.gameObject.AddComponent(metaData.triggerType);
+        Component[] triggers = realFormation.GetComponents(metaData.triggerType);
+        Component newTrigger = triggers[triggers.Length-1];
+        GameObject triggerUI = MakeTrigger(metaData);
+        triggerUI.GetComponent<TriggerUI>().realTrigger = newTrigger;
+        Instantiate(metaData.creator(uiElements)).transform.parent = triggerUI.transform;
     }
 
-    private void MakeTrigger(MetaTriggerData metaData)
+    private GameObject MakeTrigger(MetaTriggerData metaData)
     {
         GameObject trigger = Instantiate(newTrigger);
         trigger.transform.SetParent(target);
         trigger.transform.localScale = new Vector3(1f, 1f, 1f);
         trigger.GetComponent<TriggerUI>().metaTriggerData = metaData;
+        return trigger;
     }
 }

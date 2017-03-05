@@ -9,10 +9,25 @@ public class MetaTriggerData {
 
     public List<MetaActionData> allowedActions;
 
-    public MetaTriggerData(string name,  List<MetaActionData> allowedActions, System.Type triggerType)
+    public delegate void AddAction(Component trigger, Component Action);
+
+    public AddAction addAction;
+
+    public delegate List<Component> GetActions(Component trigger);
+
+    public GetActions getActions;
+
+    public delegate GameObject GetCreator(CommonUIElements ui);
+
+    public GetCreator creator;
+
+    public MetaTriggerData(string name,  List<MetaActionData> allowedActions, System.Type triggerType, GetCreator creator, AddAction addAction, GetActions getActions)
     {
         this.name = name;
         this.triggerType = triggerType;
         this.allowedActions = allowedActions;
+        this.creator = creator;
+        this.addAction = addAction;
+        this.getActions = getActions;
     }
 }

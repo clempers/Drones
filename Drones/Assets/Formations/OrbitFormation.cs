@@ -5,16 +5,17 @@ using UnityEngine;
 
 [AddComponentMenu("Formation/Orbit Formation")]
 public class OrbitFormation : Formation {
-    public float seconds_per_rotation;
+    public float seconds_per_rotation=5f;
 
-    public float seconds_ellapsed;
+    public float seconds_ellapsed=0f;
 
-    public float radius;
+    public float radius=1f;
 
-    static public MetaFormationData metaData = new MetaFormationData("Orbit Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData , KeyPressedTrigger.metaData }, typeof(OrbitFormation));
+    static public MetaFormationData metaData = new MetaFormationData("Orbit Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData , KeyPressedTrigger.metaData }, typeof(OrbitFormation), (ui => ui.orbitFormationCreator));
 
     public override void add_drone(Drone d)
     {
+        Debug.Log("Adding Drone to Orbit");
         if(transform.childCount == 0)
         {
             Vector3 projected = Vector3.ProjectOnPlane(d.transform.position- transform.position, new Vector3(0, 1, 0));

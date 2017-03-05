@@ -7,9 +7,14 @@ public class MetaActionData {
 
     public System.Type actionType;
 
-    public MetaActionData(string name, System.Type actionType)
+    public delegate GameObject GetCreator(CommonUIElements ui);
+
+    public GetCreator creator;
+
+    public MetaActionData(string name, System.Type actionType, GetCreator creator)
     {
         this.name = name;
         this.actionType = actionType;
+        this.creator = creator;
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 [AddComponentMenu("Formation/Free Formation")]
 public class FreeFormation : Formation {
 
-    static public MetaFormationData metaData = new MetaFormationData("Free Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData }, typeof(FreeFormation));
+    static public MetaFormationData metaData = new MetaFormationData("Free Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData }, typeof(FreeFormation), (ui => ui.freeFormationCreator));
 
     public override void add_drone(Drone d)
     {
