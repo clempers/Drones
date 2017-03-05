@@ -47,7 +47,7 @@ public class FormationUI : ComponentUI {
             if (metaData.creator(uiElements) != null)
             {
                 GameObject triggerCreator = Instantiate(metaData.creator(uiElements));
-                triggerCreator.transform.parent = newTrigger.transform;
+                triggerCreator.transform.SetParent(newTrigger.transform);
             }
         }
     }
@@ -62,7 +62,7 @@ public class FormationUI : ComponentUI {
         Component newTrigger = triggers[triggers.Length-1];
         GameObject triggerUI = MakeTrigger(metaData);
         triggerUI.GetComponent<TriggerUI>().realTrigger = newTrigger;
-        Instantiate(metaData.creator(uiElements)).transform.parent = triggerUI.transform;
+        Instantiate(metaData.creator(uiElements)).transform.SetParent(triggerUI.transform);
     }
 
     private GameObject MakeTrigger(MetaTriggerData metaData)

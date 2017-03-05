@@ -34,7 +34,7 @@ public class DroneOptionsUI : ComponentUI {
             return;
         GameObject newDrone = MakeDrone(metaData);
         newDrone.GetComponent<DroneUI>().realDrone = drone;
-        Instantiate(metaData.creator(uiElements)).transform.parent = newDrone.transform;
+        Instantiate(metaData.creator(uiElements)).transform.SetParent(newDrone.transform);
     }
 
     private void MakeNewDrone()

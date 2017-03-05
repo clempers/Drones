@@ -12,6 +12,8 @@ public class ShieldStorageFormation : Formation
 
     public float radius;
 
+    public List<Transform> victimList;
+
     public DirectShieldFormation direct_shield;
 
     public List<DirectShieldFormation> active_shields;
@@ -35,6 +37,17 @@ public class ShieldStorageFormation : Formation
         pending_attackers = new List<Transform>();
         pending_defenders = new List<Transform>();
         pending_idle = new List<float>();
+    }
+
+    public void Start()
+    {
+        for(int i = 0; i < victimList.Count; i++)
+        {
+            if (victimList[i].GetComponent<RequestHelp>() == null)
+                victimList[i].gameObject.AddComponent<RequestHelp>();
+            victimList[i].GetComponent<RequestHelp>().shieldFormation = this;
+            Debug.Log(victimList[i].GetComponent<RequestHelp>().shieldFormation.name);
+        }
     }
 
     private void add_pending(Transform attacker, Transform defender)
@@ -123,6 +136,7 @@ public class ShieldStorageFormation : Formation
         if (directShield == null)
         {
             directShield = Instantiate(direct_shield, victim.position, Quaternion.identity);
+            directShield.transform.SetParent(transform.parent);
             active_shields.Add(directShield);
             directShield.follow = victim;
         }

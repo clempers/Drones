@@ -47,7 +47,7 @@ public class TriggerUI : ComponentUI
             if (metaData.creator(uiElements) != null)
             {
                 GameObject actionCreator = Instantiate(metaData.creator(uiElements));
-                actionCreator.transform.parent = newAction.transform;
+                actionCreator.transform.SetParent(newAction.transform);
             }
         }
     }

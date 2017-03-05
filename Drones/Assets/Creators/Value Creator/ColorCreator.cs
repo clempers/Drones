@@ -17,6 +17,8 @@ public class ColorCreator : ValueCreator<Color>
             color_choice.colors = ChangeDropdownColor.updateColors(color_choice.colors, uiElements.color_choices[i]);
             saveCurrentValue(uiElements.color_choices[i]);
         });
+        SetValue(uiElements.color_choices[color_choice.value]);
+        saveCurrentValue(uiElements.color_choices[color_choice.value]);
         //color_choice.colors = ChangeDropdownColor.updateColors(color_choice.colors, formationUI.color_choices[0]);
     }
     public void SetOptions()

@@ -19,10 +19,11 @@ public class WorldState : MonoBehaviour
 
     public void ResetLasers()
     {
-        foreach (LaserState ls in lasers)
+        lasers.Clear();
+        /*foreach (LaserState ls in lasers)
         {
             ls.is_active = false;
-        }
+        }*/
     }
 
     public void LaserFired(RaycastHit hit, Color color)
@@ -35,6 +36,8 @@ public class WorldState : MonoBehaviour
         } else {
             laser = new LaserState();
             laser.hit = hit;
+            if (hit.collider.GetComponent<Targetable>() != null)
+                laser.target = hit.collider.transform;
             laser.is_active = true;
             laser.laser_color = color;
             laser_changes.Add(laser);
@@ -69,6 +72,8 @@ public class WorldState : MonoBehaviour
             else
             {
                 laser_changes.Remove(new_laser);
+                if (new_laser.target == null)
+                    new_laser.target = ls.target;
                 return new_laser;
             }
         });

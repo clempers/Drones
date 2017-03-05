@@ -11,9 +11,7 @@ public class ButtonPressedTrigger : BlankTrigger {
     public string buttonName;
     public override object FireTrigger()
     {
-		Debug.Log ("Checking button down "+buttonName);
 		if ((Time.deltaTime != 0f || while_paused) && Input.GetButton (buttonName)) {
-			Debug.Log ("Button is down "+buttonName);
 			return "hi";
 		}
         return null;

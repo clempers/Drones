@@ -7,5 +7,7 @@ public class LaserState {
 
     public bool is_active;
 
+    public Transform target;
+
     public RaycastHit hit;
 }

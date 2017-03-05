@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DroneSetupUI : MonoBehaviour {
+public class DroneSetupUI : MonoBehaviour
+{
+    public DroneSetup droneSetup;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public string droneName;
+
+    public Text formationSetupName;
+
+    public InputField droneNumber;
+
+    private void Start()
+    {
+        formationSetupName.text = droneName;
+        droneNumber.text = droneSetup.quantity.ToString();
+        droneNumber.onEndEdit.AddListener(s => droneSetup.quantity = int.Parse(s));
+    }
 }

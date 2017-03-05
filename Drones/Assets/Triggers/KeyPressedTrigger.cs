@@ -13,9 +13,7 @@ public class KeyPressedTrigger : BlankTrigger
     public KeyCode keycode;
     public override object FireTrigger()
 	{
-		Debug.Log ("Checking button down "+keycode);
 		if ((Time.deltaTime != 0f || while_paused) && Input.GetKeyDown (keycode)) {
-			Debug.Log ("Button is down "+keycode);
 			return "hi";
 		}
         return null;

@@ -11,7 +11,7 @@ public class OrbitFormation : Formation {
 
     public float radius=1f;
 
-    static public MetaFormationData metaData = new MetaFormationData("Orbit Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData , KeyPressedTrigger.metaData }, typeof(OrbitFormation), (ui => ui.orbitFormationCreator));
+    static public MetaFormationData metaData = new MetaFormationData("Orbit Formation", new List<MetaTriggerData>() { LaserTargetTrigger.metaData.ChangeActions(new List<MetaActionData>() { MoveFormationTargetAction.metaData }) }, typeof(OrbitFormation), (ui => ui.orbitFormationCreator));
 
     public override void add_drone(Drone d)
     {

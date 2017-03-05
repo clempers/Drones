@@ -35,7 +35,7 @@ public class FormationOptionsUI : ComponentUI {
             return;
         GameObject newFormation = MakeFormation(metaData);
         newFormation.GetComponent<FormationUI>().realFormation = formation;
-        Instantiate(metaData.creator(uiElements)).transform.parent = newFormation.transform;
+        Instantiate(metaData.creator(uiElements)).transform.SetParent(newFormation.transform);
     }
 
     private void MakeNewFormation()
@@ -48,7 +48,7 @@ public class FormationOptionsUI : ComponentUI {
         newFormation.AddComponent(metaData.formationType);
         GameObject formationUI = MakeFormation(metaData);
         formationUI.GetComponent<FormationUI>().realFormation = newFormation.GetComponent<Formation>();
-        Instantiate(metaData.creator(uiElements)).transform.parent = formationUI.transform;
+        Instantiate(metaData.creator(uiElements)).transform.SetParent(formationUI.transform);
     }
 
     private GameObject MakeFormation(MetaFormationData metaData)

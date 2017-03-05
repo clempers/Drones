@@ -7,7 +7,7 @@ using UnityEngine;
 public class BasicDrone : Drone {
     public bool precision_target = true;
 
-    static public MetaDroneData metaData = new MetaDroneData("Basic Drone", new List<MetaTriggerData>() { LaserTargetTrigger.metaData }, typeof(BasicDrone), (ui => ui.basicDroneCreator));
+    static public MetaDroneData metaData = new MetaDroneData("Basic Drone", new List<MetaTriggerData>() { LaserTargetTrigger.metaData.ChangeActions(new List<MetaActionData>() { LaserTargetAction.metaData })}, typeof(BasicDrone), (ui => ui.basicDroneCreator));
 
     private Vector3 target;
 

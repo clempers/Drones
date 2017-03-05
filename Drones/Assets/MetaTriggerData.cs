@@ -21,6 +21,10 @@ public class MetaTriggerData {
 
     public GetCreator creator;
 
+    public MetaTriggerData ChangeActions(List<MetaActionData> actions){
+        return new MetaTriggerData(name, actions, triggerType, creator, addAction, getActions);
+    }
+
     public MetaTriggerData(string name,  List<MetaActionData> allowedActions, System.Type triggerType, GetCreator creator, AddAction addAction, GetActions getActions)
     {
         this.name = name;

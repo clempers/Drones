@@ -10,7 +10,7 @@ public class LaserTargetTrigger : TransformTrigger {
 
     public Color laser_color;
 
-    static public MetaTriggerData metaData = new MetaTriggerData("Laser Target", new List<MetaActionData>() { MoveFormationTargetAction.metaData },  typeof(LaserTargetTrigger), (ui => ui.laserTargetCreator), ((trigger, action) => ((LaserTargetTrigger)trigger).actions.Add((TransformAction)action)), (c => ((LaserTargetTrigger)c).actions.ConvertAll(a => (Component)a)));
+    static public MetaTriggerData metaData = new MetaTriggerData("Laser Target", new List<MetaActionData>() { MoveFormationTargetAction.metaData , LaserTargetAction.metaData },  typeof(LaserTargetTrigger), (ui => ui.laserTargetCreator), ((trigger, action) => ((LaserTargetTrigger)trigger).actions.Add((TransformAction)action)), (c => ((LaserTargetTrigger)c).actions.ConvertAll(a => (Component)a)));
 
     private void Start()
     {
@@ -22,9 +22,9 @@ public class LaserTargetTrigger : TransformTrigger {
             return null;
         LaserState ls = worldState.GetLaserState(laser_color);
 
-		if (Time.deltaTime != 0f && ls != null)
+		if (Time.deltaTime != 0f && ls != null && ls.target != null)
         {
-            return ls.hit.collider.transform;
+            return ls.target;
         }
         return null;
     }
